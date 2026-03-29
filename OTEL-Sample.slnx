@@ -21,6 +21,7 @@
   </Folder>
   <Folder Name="/src/">
     <File Path="src\Directory.Build.props" />
+    <Project Path="src/OTEL.WebSample/OTEL.WebSample.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <File Path="tests\Directory.Build.props" />
