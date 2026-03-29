@@ -35,8 +35,12 @@ builder.Services.AddOpenTelemetry()
 
 builder.Logging.AddOpenTelemetry(options =>
 {
+  options.SetResourceBuilder(
+    ResourceBuilder.CreateDefault()
+      .AddService(serviceName, serviceVersion: serviceVersion));
   options.IncludeFormattedMessage = true;
   options.IncludeScopes = true;
+  options.ParseStateValues = true;
   options.AddOtlpExporter();
 });
 
