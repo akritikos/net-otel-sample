@@ -1,8 +1,45 @@
+using System.Diagnostics;
+
 using Kritikos.OTEL.WebSample;
+
+using OpenTelemetry.Logs;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var serviceName = builder.Environment.ApplicationName;
+var serviceVersion = typeof(Program).Assembly.GetName().Version?.ToString() ?? "0.0.0";
+using var activitySource = new ActivitySource(serviceName);
+
 builder.Services.AddOpenApi();
+builder.Services.AddHttpClient();
+
+builder.Services.AddOpenTelemetry()
+  .ConfigureResource(resource => resource
+    .AddService(serviceName, serviceVersion: serviceVersion)
+    .AddAttributes([
+      new KeyValuePair<string, object>("deployment.environment", builder.Environment.EnvironmentName),
+    ]))
+  .WithTracing(trace => trace
+    .AddSource(serviceName)
+    .AddAspNetCoreInstrumentation()
+    .AddHttpClientInstrumentation()
+    .AddOtlpExporter())
+  .WithMetrics(metric => metric
+    .SetExemplarFilter(ExemplarFilterType.TraceBased)
+    .AddAspNetCoreInstrumentation()
+    .AddHttpClientInstrumentation()
+    .AddRuntimeInstrumentation()
+    .AddOtlpExporter());
+
+builder.Logging.AddOpenTelemetry(options =>
+{
+  options.IncludeFormattedMessage = true;
+  options.IncludeScopes = true;
+  options.AddOtlpExporter();
+});
 
 var app = builder.Build();
 
