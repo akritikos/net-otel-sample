@@ -1,0 +1,5 @@
+FROM alpine:3.20
+RUN apk add --no-cache wget
+COPY generate.sh /generate.sh
+RUN chmod +x /generate.sh
+ENTRYPOINT ["/bin/sh", "/generate.sh"]
