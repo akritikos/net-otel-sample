@@ -1,2 +1,11 @@
 Directory.Packages.props merge=union
 Directory.Packages.template.props merge=upstream-wins
+
+# Auto detect text files and normalize to LF on commit
+* text=auto eol=lf
+
+# Force shell scripts to always use LF
+*.sh text eol=lf
+
+# Track PNG files with Git LFS
+*.png filter=lfs diff=lfs merge=lfs -text
