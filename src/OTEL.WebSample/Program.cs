@@ -60,6 +60,8 @@ var cities = new[]
 };
 var conditions = new[] { "Sunny", "Cloudy", "Rainy", "Stormy", "Snowy", "Windy", "Foggy", "Clear" };
 
+app.MapOpenApi();
+
 app.MapGet("/weatherforecast", (ILogger<Program> logger) =>
 {
   logger.LogInformation("Generating weather forecast for all cities");
